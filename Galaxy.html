@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Orbital Galaxies — Explore the Boundless Universe</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg-1:#0B0C10; --bg-2:#0D0D0D; --neon:#00BFFF; --neon-2:#00FFFF; --muted:#9fbddf;
+      --card-radius:14px;
+    }
+    *{box-sizing:border-box }
+    html,body{height:100%; margin:0; background: radial-gradient(ellipse at center, rgba(8,10,15,1) 0%, rgba(5,6,8,1) 60%), var(--bg-1); color:#e6eef8; font-family:"Exo 2", "Orbitron", system-ui;}
+    a { color: inherit; text-decoration: none; }
+
+    /* Particles canvas */
+    #particles { position: fixed; inset:0; z-index:0; pointer-events:none; }
+
+    /* Navbar */
+    .navbar { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.0)); z-index:40; }
+    .brand { font-family:"Orbitron",sans-serif; font-weight:900; letter-spacing:1px; color:#fff; text-shadow: 0 0 8px rgba(0,191,255,0.14); }
+    .brand .glow { background: linear-gradient(90deg,var(--neon), var(--neon-2)); -webkit-background-clip:text; background-clip:text; color:transparent; filter: drop-shadow(0 0 8px rgba(0,191,255,0.7)); }
+    .nav-link:hover{color:var(--neon); transition: smooth 0.3s;}
+    /* Hero */
+    .hero { min-height:100vh; display:flex; align-items:center; position:relative; padding-top:56px; z-index:2; }
+    .hero-inner{ max-width:1200px; margin:0 auto; padding:40px 20px; display:grid; grid-template-columns:1fr 520px; gap:28px; align-items:center; }
+    @media(max-width:992px){ .hero-inner{ grid-template-columns:1fr; text-align:center; } }
+    .hero-title{ font-family:"Orbitron",sans-serif; font-weight:900; font-size: clamp(28px,5vw,56px); margin:0 0 12px 0; }
+    .sub{ color:#bcdcff; margin-bottom:18px; font-size:1.05rem; }
+
+    /* Buttons */
+    .btn-neon{ color:#061017; background: linear-gradient(90deg,var(--neon),var(--neon-2)); border:none; padding:12px 22px; border-radius:999px; font-weight:700; box-shadow: 0 6px 24px rgba(0,191,255,0.12); transition: all .25s ease; }
+    .btn-neon:hover{ transform:translateY(-4px) scale(1.02); box-shadow: 0 14px 48px rgba(0,191,255,0.18); }
+    .btn-outline-neon{ background:transparent; color:var(--neon); border:1px solid rgba(0,191,255,0.12); padding:10px 18px; border-radius:999px; }
+
+    /* 3D container */
+    #three-hero { width:100%; height:520px; border-radius:18px; overflow:hidden; background: linear-gradient(180deg, rgba(3,4,6,0.6), rgba(0,0,0,0.6)); border:1px solid rgba(255,255,255,0.02); position:relative; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+    @media(max-width:992px){ #three-hero{ height:420px; margin-top:20px; } }
+
+    section{ padding:80px 0; position:relative; z-index:2; }
+
+    .section-title{ font-family:"Orbitron",sans-serif; font-size:1.4rem; display:flex; align-items:center; margin-bottom:18px; }
+    .section-title .bar{ width:48px; height:3px; background: linear-gradient(90deg,var(--neon),var(--neon-2)); margin-right:12px; box-shadow:0 0 14px rgba(0,191,255,0.14); }
+
+    /* Neon card */
+    .neon-card{ background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02)); border-radius:var(--card-radius); padding:16px; position:relative; border:1px solid rgba(255,255,255,0.03); transition: transform .3s ease, box-shadow .3s ease; }
+    .neon-card::before{ content:""; position:absolute; inset:-2px; border-radius:calc(var(--card-radius) + 2px); background: linear-gradient(90deg, rgba(0,191,255,0.06), rgba(0,255,255,0.12), rgba(0,191,255,0.06)); pointer-events:none; animation: border-move 5s linear infinite; filter: blur(.9px); opacity:.9; }
+    @keyframes border-move{ 0%{ background-position:0% } 100%{ background-position:200% } }
+    .neon-card:hover{ transform: translateY(-8px) scale(1.01); box-shadow: 0 12px 40px rgba(0,191,255,0.07); }
+
+    /* Planets grid */
+    .planets-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+    @media(max-width:1200px){ .planets-grid{ grid-template-columns:repeat(3,1fr);} }
+    @media(max-width:768px){ .planets-grid{ grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:480px){ .planets-grid{ grid-template-columns:repeat(1,1fr);} }
+
+    .planet-card{ border-radius:12px; overflow:hidden; padding:10px; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.45)); border:1px solid rgba(255,255,255,0.03); transition: transform .25s ease, box-shadow .25s ease; position:relative; }
+    .planet-card:hover{  border:1px solid rgba(21, 148, 233, 0.973); transition:smooth 0.4s; box-shadow: 0 18px 50px #1592f844; }
+    .planet-thumb{ width:100%; height:180px; border-radius:10px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#00121a; margin-bottom:10px; }
+    .planet-thumb img{ width:100%; height:100%; object-fit:cover; display:block; filter: saturate(1.06); opacity:0.95; }
+    .planet-name{ font-weight:800; font-family:"Orbitron",sans-serif; color:#e9fbff; font-size:1.02rem; }
+    .planet-desc{ color:#b9d8ea; font-size:.95rem; }
+
+    .planet-card::after{ content:""; position:absolute; inset:0; border-radius:12px; padding:2px; background: linear-gradient(90deg, rgba(0,191,255,0.06), rgba(0,255,255,0.08)); mask: linear-gradient(#fff 0 0) content-box; -webkit-mask-composite: xor; opacity:0.85; filter: blur(.6px); pointer-events:none; animation:rotate-border 6s linear infinite; }
+    @keyframes rotate-border{ 0%{ transform:rotate(0deg)} 100%{ transform:rotate(360deg)} }
+    .planet-card:hover{ transform: translateY(-10px) scale(1.02); box-shadow: 0 18px 60px rgba(0,191,255,0.06); }
+
+    /* Article cards */
+    .article-card{ border-radius:12px; padding:12px; border:1px solid rgba(255,255,255,0.03); background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.5)); transition: transform .25s; }
+    .article-card:hover{ transform: translateY(-8px) scale(1.01); border:1px solid rgba(21, 148, 233, 0.973); transition:smooth 0.4s; box-shadow: 0 18px 50px #1592f844; }
+    .article-thumb{ width:100%; height:170px; border-radius:8px; overflow:hidden; background:#00121a; margin-bottom:12px; }
+    .article-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* Contact */
+
+/* Contact Section Wrapper */
+.contact-section {
+  background-color: #0f0f1a;
+  color: #e0e0ff;
+  padding: 60px 20px;
+ font-family:"Orbitron",sans-serif;
+  animation: fadeIn 1s ease forwards;
+}
+
+/* Header Text */
+.contact-header {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: fadeInDown 1s ease forwards;
+}
+
+.contact-header h1 {
+  font-size: 36px;
+  color: #00f0ff;
+  margin-bottom: 10px;
+}
+
+.contact-header p {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 18px;
+  color: #aaa;
+}
+
+/* Grid Layout */
+.contact-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  justify-content: center;
+  animation: fadeInUp 1.2s ease forwards;
+}
+
+/* Form Section */
+.contact-form {
+  flex: 1 1 400px;
+  background-color: #1a1a2e;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+}
+
+.contact-form h2 {
+  color: #00f0ff;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+/* Neon Input Bars */
+.neon-form {
+  width: 100%;
+}
+
+.neon-group {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.neon-group input,
+.neon-group textarea {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #555;
+  width: 100%;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  transition: border-color 0.3s;
+}
+
+.neon-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.neon-group input:focus{
+  outline: none;
+  border-bottom: 1px solid #00f0ff;
+}
+.neon-group textarea:focus{
+   outline: none;
+  border-bottom: 1px solid #00f0ff;
+} 
+.neon-group label {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  font-size: 14px;
+  color: #aaa;
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+
+.neon-group input:focus + label,
+.neon-group input:not(:placeholder-shown) + label,
+.neon-group textarea:focus + label,
+.neon-group textarea:not(:placeholder-shown) + label {
+  top: -14px;
+  font-size: 12px;
+  color: #00f0ff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.bar {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background: #00f0ff;
+  transition: width smooth 0.4s ease;
+}
+
+.neon-group input:focus ~ .bar,
+.neon-group textarea:focus ~ .bar {
+  width: 100%;
+}
+
+/* Submit Button */
+.neon-btn {
+  background-color: #00f0ff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #0f0f1a;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.neon-btn:hover {
+  background-color: #00c0dd;
+  box-shadow: #00bfff73;
+}
+
+/* Contact Info Section */
+.contact-info {
+  flex: 1 1 400px;
+  background-color: #1a1a2e;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+}
+
+.contact-info h2 {
+  color: #00f0ff;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.contact-info p {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #ccc;
+}
+
+/* Social Icons */
+.social-icons {
+  margin-top: 20px;
+}
+
+.social-icons p {
+  margin-bottom: 10px;
+  color: #aaa;
+}
+
+.icons i {
+  font-size: 20px;
+  margin-right: 15px;
+  color: #00f0ff;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.icons i:hover {
+  transform: scale(1.2);
+}
+
+
+    /* Footer */
+    footer{ padding:36px 0; background: linear-gradient(180deg, rgba(3,4,6,0.9), rgba(0,0,0,0.95)); border-top:1px solid rgba(0,191,255,0.04); }
+
+    /* Cursor comet */
+    .trail{ position:fixed; pointer-events:none; z-index:9999; mix-blend-mode:screen; filter: blur(2px) saturate(150%); transform: translate(-50%, -50%); }
+
+    .muted{ color:var(--muted); }
+    .glow-small{ text-shadow: 0 0 8px rgba(0,191,255,0.12); }
+
+
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  0% { opacity: 0; transform: translateY(-30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Animation utility class */
+.fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 1s forwards;
+}
+
+.fade-in-down {
+  opacity: 0;
+  animation: fadeInDown 1s forwards;
+}
+
+/* Stagger effect with delay */
+.fade-delay-1 { animation-delay: 0.2s; }
+.fade-delay-2 { animation-delay: 0.4s; }
+.fade-delay-3 { animation-delay: 0.6s; }
+.fade-delay-4 { animation-delay: 0.8s; }
+
+
+  </style>
+</head>
+<body>
+
+  <!-- Particles -->
+  <canvas id="particles"></canvas>
+
+  <!-- Cursor trail elements -->
+  <div id="trail-root"></div>
+
+  <!-- NAV -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top px-4">
+    <div class="container-fluid">
+      <a class="navbar-brand brand d-flex align-items-center gap-2" href="#">
+      
+        <span class="glow">Orbital <span style="color:white">Galaxies</span></span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-end" id="navmenu">
+        <ul class="navbar-nav align-items-center">
+          <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#planets">Planets</a></li>
+          <li class="nav-item"><a class="nav-link" href="#visual">Visual</a></li>
+          <li class="nav-item"><a class="nav-link" href="#articles">Articles</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header id="home" class="hero">
+    <div class="hero-inner container">
+      <div>
+        <div>
+          <h1 class="hero-title fade-in-down fade-delay-1  scroll-fade-down" id="hero-title">Orbital Galaxies</h1>
+          <p class="sub fade-in-up fade-delay-2 scroll-fade"><i>Step Beyond the Stars,Where Cosmic Wonders and Endless Mysteries Await.</i></p>
+          <div class="d-flex gap-3 flex-wrap mb-3 fade-in-up fade-delay-3  scroll-fade">
+            <button class="btn btn-neon" onclick="scrollTo('planets')">Explore Planets</button>
+            <button class="btn btn-outline-neon" onclick="scrollTo('visual')">Enter the Galaxy</button>
+          </div>
+          <p class="muted  fade-in-up fade-delay-4"><i>Unlock the Secrets of the Universe</i></p>
+        </div>
+      </div>
+
+      <div>
+        <div id="three-hero"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section id="about" class="scroll-reveal">
+    <div class="container">
+      <h3 class="section-title"><span class="bar"></span>About Orbital Galaxies</h3>
+      <div class="row g-4">
+        <div class="col-lg-6" data-animate>
+          <div class="neon-card fade-in-up fade-delay-4  scroll-fade">
+            <h4 style="font-family:Orbitron;">Our Mission</h4>
+            <p class="muted">Orbital Galaxies crafts cinematic, web-based space experiences — combining 3D visuals, interactive animations, and modern UI to make exploration feel alive in the browser.</p>
+
+            <h6 class="mt-3 glow-small">What we build</h6>
+            <ul class="muted">
+              <li>3D rotating planets and immersive space environments</li>
+              <li>Interactive galleries & article hub for space content</li>
+              <li>Responsive, performance-friendly design for all devices</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-lg-6" data-animate>
+          <div class="neon-card fade-in-up fade-delay-2  scroll-fade" style="height:100%;">
+            <h5 class="mb-2">Team</h5>
+            <div class="row g-2">
+              <div class="col-6">
+                <div style="display:flex; gap:12px; align-items:center;">
+                  <img src="assets/girlyimg.jpg" style="width:64px;height:64px;border-radius:12px;object-fit:cover;">
+                  <div><strong class="d-block">Luna Donald</strong><small class="muted">Lead Visual Engineer</small></div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div style="display:flex; gap:12px; align-items:center;">
+                  <img src="assets/male.jpg" style="width:64px;height:64px;border-radius:12px;object-fit:cover;">
+                  <div><strong class="d-block">Smith Kal</strong><small class="muted">UI Designer</small></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <h6 class="mb-1">Quick Facts</h6>
+              <div class="row text-muted small">
+                <div class="col-6"><strong>100+</strong> visuals</div>
+                <div class="col-6"><strong>12</strong> demo planets</div>
+                <div class="col-6 mt-2"><strong>3</strong> interactive scenes</div>
+                <div class="col-6 mt-2"><strong>Live</strong> client demo</div>
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <button class="btn btn-outline-neon">Read our story</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLANETS GALLERY -->
+  <section id="planets" class="scroll-reveal">
+    <div class="container">
+      <h3 class="section-title"><span class="bar"></span>Planets Gallery</h3>
+      <p class="muted mb-4">Hover any card to see neon effects. These are demo entries with real space/planet images for preview purposes.</p>
+
+      <div class="planets-grid">
+        <!-- gallery cards with dummy content -->
+        <div class="planet-card fade-in-up fade-delay-1 scroll-fade" data-animate>
+          <div class="planet-thumb"><img src="assets/Mercury.jpg" alt="Mercury"></div>
+          <div class="planet-name">Mercury</div>
+          <div class="planet-desc">Small and cratered. Surface signature: rugged, silicate-rich terrain.</div>
+        </div>
+
+        <div class="planet-card fade-in-up fade-delay-1  scroll-fade" data-animate>
+          <div class="planet-thumb"><img src="assets/venus.jpg" alt="Venus"></div>
+          <div class="planet-name">Venus</div>
+          <div class="planet-desc">Shrouded in thick atmosphere; bright and mysterious clouds cover its face.</div>
+        </div>
+
+        <div class="planet-card fade-in-up fade-delay-2 scroll-fade" data-animate>
+          <div class="planet-thumb"><img src="assets/earth.jpg" alt="Earth"></div>
+          <div class="planet-name">Earth</div>
+          <div class="planet-desc">Our home — blue oceans, dynamic weather, life-rich biosphere.</div>
+        </div>
+
+        <div class="planet-card fade-in-up fade-delay-2 scroll-fade" data-animate>
+          <div class="planet-thumb"><img src="assets/planet.jpg" alt="Mars"></div>
+          <div class="planet-name">Mars</div>
+          <div class="planet-desc">Red dusty deserts, deep canyons, and long-standing exploration interest.</div>
+        </div>
+
+        <div class="planet-card fade-in-up fade-delay-2 scroll-fade" data-animate>
+          <div class="planet-thumb"><img src="assets/planet2.jpg" alt="Jupiter"></div>
+          <div class="planet-name">Jupiter</div>
+          <div class="planet-desc">Stormy gas giant with huge bands and iconic Great Red Spot.</div>
+        </div>
+
+        <div class="planet-card fade-in-up fade-delay-3 scroll-fade " data-animate>
+          <div class="planet-thumb"><img src="assets/saturnus.jpg" alt="Saturn"></div>
+          <div class="planet-name">Saturn</div>
+          <div class="planet-desc">Beautiful wide rings — a visual masterpiece in the solar system.</div>
+        </div>
+
+        <div class="planet-card fade-in-up fade-delay-3 scroll-fade" data-animate>
+          <div class="planet-thumb"><img src="assets/uranus.jpg" alt="Uranus"></div>
+          <div class="planet-name">Uranus</div>
+          <div class="planet-desc">Cyan-hued ice giant with unusual axial tilt.</div>
+        </div>
+
+        <div class="planet-card fade-in-up fade-delay-3 scroll-fade" data-animate>
+          <div class="planet-thumb"><img src="assets/neptune.jpg" alt="Neptune"></div>
+          <div class="planet-name">Neptune</div>
+          <div class="planet-desc">Deep blue, remote, and full of powerful winds and storms.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VISUAL UNIVERSE (3D scene) -->
+  <section id="visual">
+    <div class="container">
+      <h3 class="section-title"><span class="bar"></span>Visual Universe</h3>
+      <p class="muted mb-3"><i>Witness the Universe in Motion,Where Planets, Asteroids, and Stars Come Alive.</i></p>
+
+      <div class="neon-card" style="padding:0; overflow:hidden;">
+        <div id="vis-canvas" class="fade-in-up fade-delay-2  scroll-fade" style="height:620px; width:100%; position:relative;" > <img src="assets/galaxy.jpg" 
+       alt="Space Image" 
+       style="width:100%; height:620px; object-fit:cover;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARTICLES -->
+  <section id="articles" class="scroll-reveal">
+    <div class="container">
+      <h3 class="section-title"><span class="bar"></span>Articles</h3>
+      <p class="muted mb-3">Selected articles with dummy content to preview layout and typography.</p>
+
+      <div class="row g-4">
+        <div class="col-md-4" data-animate>
+          <div class="article-card fade-in-up fade-delay-1  scroll-fade">
+            <div class="article-thumb"><img src="assets/spacetechnology.jpg" alt="Design"></div>
+            <h5>Space Telescope</h5>
+            <p class="muted small">Space telescopes observe distant stars, galaxies, and exoplanets without atmospheric interference, capturing light across wavelengths to explore the universe in detail.</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <small class="muted">Aug 1, 2025</small>
+              <button class="btn btn-outline-neon btn-sm">Read</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4" data-animate>
+          <div class="article-card fade-in-up fade-delay-2  scroll-fade">
+            <div class="article-thumb"><img src="assets/universe exploration.jpg" alt="Three.js"></div>
+            <h5>Planet Exploration</h5>
+            <p class="muted small"> Planetary rings are made of ice, rock, and dust particles orbiting around planets like Saturn. Discover how these stunning rings form, evolve, and what they reveal about planetary systems.</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <small class="muted">Sept 12, 2025</small>
+              <button class="btn btn-outline-neon btn-sm">Read</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4" data-animate>
+          <div class="article-card fade-in-up fade-delay-3 scroll-fade">
+            <div class="article-thumb"><img src="assets/blackhole2.jpg" alt="Performance"></div>
+            <h5>Supermassive Giants</h5>
+            <p class="muted small">Black holes are regions in space with gravity so strong that nothing can escape. Scientists study their behavior to understand the mysteries of our universe, including time, space, and matter.</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <small class="muted">Oct 2, 2025</small>
+              <button class="btn btn-outline-neon btn-sm">Read</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+<section class="contact-section scroll-reveal" >
+  <div class="contact-header  fade-in-down fade-delay-1  scroll-fade-down">
+    <h1>Contact us</h1>
+    <p>We would love to hear from you</p>
+  </div>
+  <div class="contact-container">
+    <div class="contact-form fade-in-up fade-delay-2 scroll-fade">
+      <h2>Send us a message</h2>
+    <form class="neon-form">
+  <div class="neon-group">
+    <input type="text" required />
+    <label>Your Name</label>
+    <span class="bar"></span>
+  </div>
+  <div class="neon-group">
+    <input type="email" required />
+    <label>Your Email</label>
+    <span class="bar"></span>
+  </div>
+  <div class="neon-group">
+    <textarea required></textarea>
+    <label>Your Message</label>
+    <span class="bar"></span>
+  </div>
+  <button type="submit" class="neon-btn">Send Message</button>
+</form>
+    </div>
+    <div class="contact-info fade-in-up fade-delay-3 scroll-fade">
+      <h2>Get in touch</h2>
+      <p><strong>Location:</strong> 121 King Street, Melbourne, Australia</p>
+      <p><strong>Email:</strong> contact@email.com</p>
+      <p><strong>Phone:</strong> +61 3 8376 6284</p>
+      <div class="social-icons">
+        <p>Follow our social media</p>
+        <div class="icons">
+          <i class="fab fa-facebook-f"></i>
+          <i class="fab fa-twitter"></i>
+          <i class="fab fa-instagram"></i>
+          <i class="fab fa-linkedin-in"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6 d-flex gap-3 align-items-center">
+          <div>
+            <div class="brand">Orbital <span class="glow">Galaxies</span></div>
+            <div class="muted small">A cinematic exploration of space in the browser</div>
+          </div>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+          <div class="d-flex gap-3 justify-content-md-end">
+            <a href="#" class="text-decoration-none"><i class="fa-brands fa-github fa-lg" style="color:var(--neon)"></i></a>
+            <a href="#" class="text-decoration-none"><i class="fa-brands fa-instagram fa-lg" style="color:var(--neon)"></i></a>
+            <a href="#" class="text-decoration-none"><i class="fa-brands fa-linkedin fa-lg" style="color:var(--neon)"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="text-center muted mt-4">© 2025 Orbital Galaxies. All rights reserved.</div>
+    </div>
+  </footer>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+
+ <script src="script.js" ></script>
+
+</body>
+</html>
